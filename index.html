@@ -90,7 +90,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .fc .ans .p{color:var(--muted)}
 .fc .ans .t{font-size:20px;background:var(--mint);padding:4px 14px;border-radius:10px}
 .fc .hint{font-size:12px;color:var(--muted)}
-.fc-top{display:flex;align-items:center;justify-content:space-between;width:100%;gap:8px}
+.fc-top{display:flex;align-items:center;justify-content:space-between;min-height:44px;width:100%;gap:8px}
 .fc-ex{display:flex;align-items:flex-end;gap:8px;width:100%} .fc-ex .ex{flex:1;min-width:0}
 .fc-ic{flex:none;width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--surface);font-size:20px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
 .fc-ic:hover{border-color:var(--pink)}
@@ -610,7 +610,7 @@ body.band-b .lv[aria-pressed="true"],body.band-a .lv[aria-pressed="true"]{border
     <button data-go="map" class="on"><span>🏮</span><b data-i="nvMap"></b></button>
     <button data-go="list"><span>📋</span><b data-i="nvList"></b></button>
     <button data-go="cards"><span>🃏</span><b data-i="nvCards"></b></button>
-    <button data-go="quiz"><span>✍️</span><b data-i="nvQuiz"></b></button>
+    <button data-go="quiz"><span>📝</span><b data-i="nvQuiz"></b></button>
     <button data-go="rad"><span class="hz">部</span><b data-i="nvRad"></b></button>
     <button data-go="ai"><span>💬</span><b data-i="nvAi"></b></button>
     <button data-go="plan"><span>📅</span><b data-i="nvPlan"></b></button>
@@ -1420,7 +1420,7 @@ function renderCard(){
   $("#fcInfo").textContent = t("fcInfo",{a:di+1,b:deck.length});
   $("#fc").setAttribute("aria-label", t("flip"));
   const ic = (id,e,k) => `<button type="button" class="fc-ic" data-fc="${id}" aria-label="${esc(t(k).replace(/^\S+\s*/,""))}" title="${esc(t(k).replace(/^\S+\s*/,""))}">${e}</button>`;
-  $("#fc").innerHTML = `<div class="fc-top">${ic("stroke","✍️","strokes")}<div class="hz ${S.simp&&simpDiff(w)?"sp":""}">${esc(hz(w))}</div>${ic("say","🔊","sayWord")}</div>` + (flipped
+  $("#fc").innerHTML = (()=>{ const h=`<div class="hz ${S.simp&&simpDiff(w)?"sp":""}">${esc(hz(w))}</div>`; return flipped ? `<div class="fc-top">${ic("stroke","✍️","strokes")}${h}${ic("say","🔊","sayWord")}</div>` : h; })() + (flipped
     ? `<div class="ans"><div class="p">${esc(w[4])} · ${esc(w[5]||"")}</div><div class="t">${mHTML(w)}</div></div>${w[8]?`<div class="fc-ex">${exHTML(w)}${ic("sayEx","🔊","sayEx")}</div>`:""}`
     : `<div class="hint">${t("flip")}</div>`);
   $("#rate").hidden = !flipped;
@@ -1925,7 +1925,7 @@ function openSheet(i){
   sh.innerHTML = `<h2>${title}</h2><div class="muted">${esc(sub)} · ${starHTML(n.st)} ${n.best?t("qzBest",{s:n.best}):""}</div>
     ${n.open?"":`<div class="mp-lockmsg">${t("mpLocked")}</div>`}
     ${show.length?`<div class="mp-ws">${show.map(w=>`<button class="mp-w ${S.st[w[0]]===2?"k":""}" data-no="${w[0]}"><b>${esc(hz(w))}</b><small>${esc(w[4])} · ${esc(meaning(w).txt).slice(0,18)}</small></button>`).join("")}</div>`:""}
-    <div class="mp-acts">${n.k==="u"?`<button class="lg-btn ghost" data-sa="learn">🃏 ${t("mpLearn")}</button>`:""}<button class="lg-btn" data-sa="quiz" style="${n.k==="u"?"":"grid-column:1/-1"}">✍️ ${t(n.k==="boss"?"mpQuiz20":"mpQuiz10")}</button></div>
+    <div class="mp-acts">${n.k==="u"?`<button class="lg-btn ghost" data-sa="learn">🃏 ${t("mpLearn")}</button>`:""}<button class="lg-btn" data-sa="quiz" style="${n.k==="u"?"":"grid-column:1/-1"}">📝 ${t(n.k==="boss"?"mpQuiz20":"mpQuiz10")}</button></div>
     <button class="mini" data-sa="close" style="align-self:center">${t("close")}</button>`;
   sh.dataset.n=i; $("#mpSheet").hidden=false;
 }
