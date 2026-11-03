@@ -90,6 +90,10 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .fc .ans .p{color:var(--muted)}
 .fc .ans .t{font-size:20px;background:var(--mint);padding:4px 14px;border-radius:10px}
 .fc .hint{font-size:12px;color:var(--muted)}
+.fc-top{display:flex;align-items:center;justify-content:space-between;width:100%;gap:8px}
+.fc-ex{display:flex;align-items:flex-end;gap:8px;width:100%} .fc-ex .ex{flex:1;min-width:0}
+.fc-ic{flex:none;width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--surface);font-size:20px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
+.fc-ic:hover{border-color:var(--pink)}
 .rate{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:min(440px,100%)}
 .rate button{font:inherit;border:0;border-radius:12px;padding:10px;cursor:pointer;font-weight:600}
 .r0{background:var(--no-soft);color:var(--no)} .r1{background:var(--warn-soft);color:var(--warn)} .r2{background:var(--ok-soft);color:var(--ok)}
@@ -181,6 +185,7 @@ dialog::backdrop{background:rgba(20,10,20,.45)}
 .dlg .hz{font-family:var(--f-hz);font-size:40px}
 .dlg-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
 @media (max-width:760px){.levels{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:760px){.levels{gap:6px}.lv{padding:5px 9px;gap:2px;border-radius:10px}.lv b{font-size:12.5px;line-height:1.25}.lv .n{font-size:11px;line-height:1.25}.lv .meter{height:4px}}
 @media (max-width:520px){.levels{grid-template-columns:repeat(3,minmax(0,1fr))}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.card .hz{font-size:26px}}
 @media (prefers-reduced-motion:no-preference){.fc,.opt,.lv{transition:background .15s,border-color .15s,box-shadow .15s}}
 .brand h1 .h1t{font-family:inherit;color:inherit}
@@ -632,7 +637,7 @@ body.band-b .lv[aria-pressed="true"],body.band-a .lv[aria-pressed="true"]{border
         <button class="r1" data-v="1" data-i="s1"></button>
         <button class="r2" data-v="2" data-i="s2"></button>
       </div>
-      <div class="ai-row"><button class="mini" id="fcSpeak" data-i="sayWord"></button><button class="mini" id="fcSpeakEx" data-i="sayEx"></button><button class="mini" id="fcStroke" data-i="strokes"></button><button class="mini ai" id="fcAi" data-i="aiExplain"></button></div>
+      
     </div>
   </section>
 
@@ -1414,16 +1419,17 @@ function renderCard(){
   const w=deck[di];
   $("#fcInfo").textContent = t("fcInfo",{a:di+1,b:deck.length});
   $("#fc").setAttribute("aria-label", t("flip"));
-  $("#fc").innerHTML = `<div class="hz ${S.simp&&simpDiff(w)?"sp":""}">${esc(hz(w))}</div>` + (flipped
-    ? `<div class="ans"><div class="p">${esc(w[4])} · ${esc(w[5]||"")}</div><div class="t">${mHTML(w)}</div></div>${exHTML(w)}`
+  const ic = (id,e,k) => `<button type="button" class="fc-ic" data-fc="${id}" aria-label="${esc(t(k).replace(/^\S+\s*/,""))}" title="${esc(t(k).replace(/^\S+\s*/,""))}">${e}</button>`;
+  $("#fc").innerHTML = `<div class="fc-top">${ic("stroke","✍️","strokes")}<div class="hz ${S.simp&&simpDiff(w)?"sp":""}">${esc(hz(w))}</div>${ic("say","🔊","sayWord")}</div>` + (flipped
+    ? `<div class="ans"><div class="p">${esc(w[4])} · ${esc(w[5]||"")}</div><div class="t">${mHTML(w)}</div></div>${w[8]?`<div class="fc-ex">${exHTML(w)}${ic("sayEx","🔊","sayEx")}</div>`:""}`
     : `<div class="hint">${t("flip")}</div>`);
   $("#rate").hidden = !flipped;
 }
 const flip=()=>{flipped=!flipped;renderCard();};
-$("#fc").onclick=flip; $("#fc").onkeydown=e=>{if(e.key===" "||e.key==="Enter"){e.preventDefault();flip();}};
+$("#fc").onclick=e=>{ const b=e.target.closest("[data-fc]"); if(!b) return flip(); e.stopPropagation(); const w=deck[di], a=b.dataset.fc;
+  if(a==="say") speak(w); else if(a==="sayEx"){ if(w[8]) speak(w, w[8]); } else openWord(w); }; $("#fc").onkeydown=e=>{if(e.target.closest("[data-fc]")) return; if(e.key===" "||e.key==="Enter"){e.preventDefault();flip();}};
 $("#rate").onclick=e=>{ const b=e.target.closest("button"); if(!b) return; S.st[deck[di][0]]=+b.dataset.v; markDay(); save(); renderLevels(); di++; flipped=false; if(di>=deck.length) buildDeck(); renderCard(); };
-$("#fcSpeak").onclick=()=>speak(deck[di]); $("#fcSpeakEx").onclick=()=>{ if(deck[di][8]) speak(deck[di], deck[di][8]); };
-$("#fcAi").onclick=()=>openWord(deck[di], true); $("#fcStroke").onclick=()=>openWord(deck[di]);
+
 
 // ---------- quiz: units of 20 words, 4 mixed question types, points + combo ----------
 const UNIT = 20;
