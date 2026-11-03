@@ -250,6 +250,18 @@ dialog::backdrop{background:rgba(20,10,20,.45)}
 .opt .opy{display:block;font-size:12px;color:var(--muted)} .opt .ohz{font-family:var(--f-hz);font-size:24px}
 .qans{min-height:84px;width:100%;background:var(--bg);border-radius:14px;padding:8px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center} .qans.good{outline:2px solid var(--ok)} .qans.bad{outline:2px solid var(--no)}
 .qend{font-size:24px}
+.coin-fx{position:fixed;left:50%;top:42%;z-index:90;pointer-events:none;width:0;height:0}
+.coin-fx .coin{position:absolute;left:-44px;top:-44px;width:88px;height:88px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(circle at 35% 30%,#fff6c8 0,#ffd54a 35%,#f2a516 75%,#c97b06 100%);box-shadow:0 0 0 5px #ffe58a inset,0 0 0 3px #c97b06,0 8px 22px rgba(201,123,6,.5);
+  animation:coinUp 1.2s cubic-bezier(.2,1.4,.4,1) forwards}
+.coin-fx .coin b{font-size:28px;font-weight:800;color:#8a4b00;text-shadow:0 1px 0 #fff3b0}
+.coin-fx.big .coin{transform-origin:center} .coin-fx.big .coin b::after{content:" 🔥"}
+.coin-fx i{position:absolute;left:-6px;top:-6px;width:12px;height:12px;background:#ffc928;clip-path:polygon(50% 0,61% 39%,100% 50%,61% 61%,50% 100%,39% 61%,0 50%,39% 39%);
+  animation:spark .8s ease-out forwards;transform:rotate(var(--a)) translateY(0)}
+@keyframes coinUp{0%{transform:scale(.2) translateY(30px) rotateY(0);opacity:0}25%{transform:scale(1.15) translateY(-10px) rotateY(180deg);opacity:1}45%{transform:scale(1) translateY(-20px) rotateY(360deg)}80%{opacity:1}100%{transform:scale(.6) translateY(-160px);opacity:0}}
+@keyframes spark{0%{transform:rotate(var(--a)) translateY(0) scale(.4);opacity:1}100%{transform:rotate(var(--a)) translateY(-95px) scale(1);opacity:0}}
+.qpts.bump{animation:bump .45s ease}
+@keyframes bump{0%,100%{transform:scale(1)}40%{transform:scale(1.45);color:#f2a516}}
 .bank{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
 .tile{font:inherit;border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:12px;padding:6px 12px;cursor:pointer;display:flex;flex-direction:column;align-items:center;box-shadow:0 2px 0 var(--line)}
 .tile small{font-size:12px;color:var(--muted)} .tile b{font-family:var(--f-hz);font-size:24px;font-weight:500} .tile.used{visibility:hidden}
@@ -440,14 +452,15 @@ body.on-map .mp-nav{display:grid}
 .lg-title{display:flex;align-items:center;gap:2px;color:var(--xy-cream);filter:drop-shadow(0 3px 0 rgba(0,0,0,.18))} .lg-title>.cw{width:66px;height:74px}
 .heart{position:relative;width:84px;height:78px;background:#fff;clip-path:path("M42 76 C10 54 0 38 0 22 C0 9 10 0 22 0 C31 0 38 5 42 12 C46 5 53 0 62 0 C74 0 84 9 84 22 C84 38 74 54 42 76Z");display:flex;justify-content:center;margin-right:4px}
 .heart .cw{color:var(--xy-red);width:50px;height:52px;margin-top:8px}
-.lg-map{position:relative;width:min(230px,52vw);margin-top:6px} .lg-map img{width:100%;display:block;filter:drop-shadow(0 16px 20px rgba(60,0,0,.35));animation:bob 6s ease-in-out infinite}
+.lg-map{position:relative;width:min(230px,52vw);margin-top:6px} .lg-map img{width:100%;display:block;mix-blend-mode:screen;animation:bob 6s ease-in-out infinite}
+.lg-title-txt{font-family:var(--f-th);font-weight:700;font-size:44px;letter-spacing:.08em;line-height:1.1;text-align:center}
 .lg-map .tw{position:absolute;left:-46%;bottom:14%;width:76%;aspect-ratio:790/240;color:var(--xy-cream);transform:rotate(-10deg);filter:drop-shadow(0 3px 0 rgba(0,0,0,.2))}
 .lg-tagline{position:relative;text-align:center;max-width:440px;display:flex;flex-direction:column;gap:6px} .lg-tagline b{font-family:var(--f-hz);font-size:24px;color:var(--xy-cream);letter-spacing:.08em} .lg-tagline>span{color:#ffe7e1;font-size:14px}
 .lg-chips{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:6px} .lg-chips i{font-style:normal;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28);border-radius:999px;padding:3px 10px;font-size:12px}
 @media (max-width:860px){
   .lg2{grid-template-columns:1fr;min-height:auto} .lg-hero{order:-1;padding:22px 16px 18px;gap:10px}
   .lg-art{flex-direction:row;gap:14px} .lg-title>.cw{width:40px;height:46px} .heart{transform:scale(.62);margin:-14px -14px -14px -18px}
-  .lg-map{width:84px} .lg-map .tw{display:none} .lg-tagline b{font-size:18px} .lg-tagline>span{font-size:12.5px}
+  .lg-map{width:84px} .lg-title-txt{font-size:24px} .lg-map .tw{display:none} .lg-tagline b{font-size:18px} .lg-tagline>span{font-size:12.5px}
   .lg-form{padding:14px 14px 36px} .lg-form .lg-card{padding:22px 18px} .lg-h{font-size:23px}
 }
 @media (max-width:480px){ .lg-card.up .lg-grid{grid-template-columns:1fr} }
@@ -495,6 +508,8 @@ body.band-b{--bg:#f7faf3;--surface:#fff;--fg:#2c3028;--muted:#6e7a67;--line:#e1e
 body.band-b .lv[aria-pressed="true"],body.band-a .lv[aria-pressed="true"]{border-color:var(--pink);box-shadow:0 0 0 3px var(--pink-soft)}
 .tab.lckd{opacity:.6}
 </style>
+</head>
+<body>
 
 <div class="wrap">
   <div class="trial" id="trialBar" hidden><span data-i="trBar"></span><span class="tr-b"><button class="mini" onclick="showLogin()" data-i="trLogin"></button><button class="mini buy" data-pay data-i="trBuy"></button></span></div>
@@ -557,8 +572,8 @@ body.band-b .lv[aria-pressed="true"],body.band-a .lv[aria-pressed="true"]{border
     <i class="sl" style="--x:8%;--d:0s;--s:.8"></i><i class="sl" style="--x:30%;--d:-7s;--s:.6"></i><i class="sl" style="--x:72%;--d:-3s;--s:.75"></i><i class="sl" style="--x:90%;--d:-12s;--s:.55"></i>
     <span class="cw big" style="--m:url(img/hua.png);right:-4%;top:-2%"></span>
     <div class="lg-art">
-      <div class="lg-title"><span class="heart"><span class="cw" style="--m:url(img/ai.png)"></span></span><span class="cw" style="--m:url(img/shang.png)"></span><span class="cw" style="--m:url(img/hua.png)"></span><span class="cw" style="--m:url(img/yu.png)"></span></div>
-      <div class="lg-map"><img src="img/taiwan.webp" alt=""><span class="cw tw" style="--m:url(img/taiwan-zi.png)"></span></div>
+      <div class="lg-title lg-title-txt">TAIWAN TOCFL</div>
+      <div class="lg-map"><img src="img/taiwan-map.png" alt=""></div>
     </div>
     <div class="lg-tagline"><b data-i="lgHeroH"></b><span data-i="lgHeroD"></span>
       <span class="lg-chips"><i>📘 Band A · 1,226</i><i>📗 Band B · 3,509</i><i>部首 · 214</i></span></span></div>
@@ -1141,7 +1156,7 @@ function renderCards(ws, locked, byNum){
     const st=S.st[w[0]], h=hz(w);
     return `<article class="card" data-no="${w[0]}">
       <div class="head"><span>${w[0]>1226?w[0]-1226:w[0]}${byNum?" · "+w[1]:""}</span><span>${esc(w[5]||"")}</span></div>
-      <div class="hz ${h.length>4?"long":""} ${S.simp&&simpDiff(w)?"sp":""}">${tzHTML(h)}</div>
+      <div class="hz ${h.length>4?"long":""} ${S.simp&&simpDiff(w)?"sp":""}">${esc(h)}</div>
       <div class="py">${esc(w[4])}</div>
       <div class="th">${mHTML(w)}</div>
       <div class="more"><button class="mini" data-act="say" aria-label="🔊">🔊</button><button class="mini" data-act="open">${t("openDetail")}</button></div>
@@ -1399,7 +1414,7 @@ function renderCard(){
   const w=deck[di];
   $("#fcInfo").textContent = t("fcInfo",{a:di+1,b:deck.length});
   $("#fc").setAttribute("aria-label", t("flip"));
-  $("#fc").innerHTML = `<div class="hz ${S.simp&&simpDiff(w)?"sp":""}">${tzHTML(hz(w))}</div>` + (flipped
+  $("#fc").innerHTML = `<div class="hz ${S.simp&&simpDiff(w)?"sp":""}">${esc(hz(w))}</div>` + (flipped
     ? `<div class="ans"><div class="p">${esc(w[4])} · ${esc(w[5]||"")}</div><div class="t">${mHTML(w)}</div></div>${exHTML(w)}`
     : `<div class="hint">${t("flip")}</div>`);
   $("#rate").hidden = !flipped;
@@ -1535,9 +1550,23 @@ function answer(correct){ markDay();
     if(q.w){ S.wrong=S.wrong.filter(n=>n!==q.w[0]); } }
   else { QZ.streak=0; if(q.w){ QZ.missed.add(q.w[0]); if(!S.wrong.includes(q.w[0])) S.wrong.push(q.w[0]); if(S.st[q.w[0]]===2) S.st[q.w[0]]=1; } }
   save(); renderLevels(); renderQuiz2();
-  try{ (correct?beep(880,.08):beep(220,.15)); }catch(e){}
+  try{ correct ? (cheer(QZ.streak), coinPop(q.pts, QZ.streak)) : boo(); }catch(e){}
 }
 let actx=null; function beep(f,d){ actx=actx||new (window.AudioContext||window.webkitAudioContext)(); const o=actx.createOscillator(), g=actx.createGain(); o.frequency.value=f; g.gain.value=.05; o.connect(g); g.connect(actx.destination); o.start(); o.stop(actx.currentTime+d); }
+// happy "ding-ding-ding!" arpeggio + sparkle; bigger fanfare on a 3+ streak
+function tone(f,t0,d,type="triangle",vol=.12){ const o=actx.createOscillator(), g=actx.createGain(); o.type=type; o.frequency.setValueAtTime(f,t0);
+  g.gain.setValueAtTime(0,t0); g.gain.linearRampToValueAtTime(vol,t0+.015); g.gain.exponentialRampToValueAtTime(.0001,t0+d); o.connect(g); g.connect(actx.destination); o.start(t0); o.stop(t0+d+.02); }
+function cheer(streak){ actx=actx||new (window.AudioContext||window.webkitAudioContext)(); if(actx.state==="suspended") actx.resume(); const t=actx.currentTime;
+  const notes = streak>=3 ? [523.25,659.25,783.99,1046.5,1318.5] : [659.25,783.99,1046.5];
+  notes.forEach((f,i)=>tone(f,t+i*.075,.35));
+  [2093,2637,3136].forEach((f,i)=>tone(f,t+notes.length*.075+i*.05,.25,"sine",.05)); }
+function boo(){ actx=actx||new (window.AudioContext||window.webkitAudioContext)(); const t=actx.currentTime; tone(330,t,.18,"sine",.08); tone(247,t+.14,.3,"sine",.08); }
+function coinPop(pts, streak){
+  if(matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const box=document.createElement("div"); box.className="coin-fx" + (streak>=3?" big":"");
+  box.innerHTML=`<div class="coin"><b>+${pts}</b></div>` + Array.from({length:streak>=3?12:8},(_,i)=>`<i style="--a:${i*(360/(streak>=3?12:8))}deg"></i>`).join("");
+  document.body.appendChild(box); setTimeout(()=>box.remove(),1300);
+  setTimeout(()=>{ const p=document.querySelector(".qpts"); if(p){ p.classList.remove("bump"); void p.offsetWidth; p.classList.add("bump"); } },550); }
 function renderResult(){
   const n=QZ.qs.length, p=Math.round(QZ.ok/n*100), s=stars(p), prev=S.qb[QZ.key], nb=!prev||QZ.score>prev.b;
   if(!QZ.saved){ QZ.saved=true; if(QZ.key){ S.qb[QZ.key]={b:Math.max(QZ.score,prev?prev.b:0), s:Math.max(s,prev?prev.s:0)}; save(); } QZ.newBest=nb&&!!QZ.key&&QZ.score>0; }
@@ -1942,4 +1971,5 @@ applyI18n(); renderAll(); if(!S.mapSeen){ S.mapSeen=1; S.tab="map"; }
 showTab(S.tab||"map");
 </script>
 
+</body>
 </html>
