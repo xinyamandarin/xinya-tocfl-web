@@ -539,11 +539,11 @@ body.band-b .lv[aria-pressed="true"],body.band-a .lv[aria-pressed="true"]{border
     <div class="tabs" role="tablist">
       <button class="tab" role="tab" data-tab="map" aria-selected="false" data-i="tabMap"></button>
       <button class="tab" role="tab" data-tab="list" aria-selected="true" data-i="tabList"></button>
-      <button class="tab" role="tab" data-tab="cards" aria-selected="false" data-i="tabCards"></button>
-      <button class="tab" role="tab" data-tab="quiz" aria-selected="false" data-i="tabQuiz"></button>
-      <button class="tab" role="tab" data-tab="rad" aria-selected="false">部首 泡泡圖</button>
-      <button class="tab" role="tab" data-tab="ai" aria-selected="false" data-i="tabAi"></button>
       <button class="tab" role="tab" data-tab="plan" aria-selected="false" data-i="tabPlan"></button>
+      <button class="tab" role="tab" data-tab="quiz" aria-selected="false" data-i="tabQuiz"></button>
+      <button class="tab" role="tab" data-tab="cards" aria-selected="false" data-i="tabCards"></button>
+      <button class="tab" role="tab" data-tab="ai" aria-selected="false" data-i="tabAi"></button>
+      <button class="tab" role="tab" data-tab="rad" aria-selected="false" data-i="nvRad"></button>
     </div>
   </div>
 
@@ -609,11 +609,11 @@ body.band-b .lv[aria-pressed="true"],body.band-a .lv[aria-pressed="true"]{border
   <nav class="mp-nav">
     <button data-go="map" class="on"><span>🏮</span><b data-i="nvMap"></b></button>
     <button data-go="list"><span><svg class="nv-ic" viewBox="0 0 24 24" aria-hidden="true"><g fill="#7a7a7a"><rect x="2" y="2.5" width="8.5" height="8.5" rx="2"/><rect x="2" y="13" width="8.5" height="8.5" rx="2"/></g><g fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6.8l1.7 1.7 3-3.3"/><path d="M4 17.3l1.7 1.7 3-3.3"/></g><g stroke="#b9b1b1" stroke-width="1.2" stroke-linecap="round"><path d="M13 6.8h9"/><path d="M13 17.3h9"/><path d="M2 12h20" stroke="#ddd6d6"/></g></svg></span><b data-i="nvList"></b></button>
-    <button data-go="cards"><span><svg class="nv-ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="2.5" width="12" height="16.5" rx="2.6" fill="#138594" transform="rotate(22 14 10.5)"/><rect x="6.5" y="3" width="12" height="17" rx="2.6" fill="#C41E26" transform="rotate(11 12.5 11.5)"/><rect x="3.5" y="3.5" width="13" height="18" rx="2.6" fill="#F9B13D"/><text x="10" y="16.4" text-anchor="middle" font-size="11" font-weight="700" fill="#fff" font-family="Noto Serif TC,serif">中</text></svg></span><b data-i="nvCards"></b></button>
-    <button data-go="quiz"><span>📝</span><b data-i="nvQuiz"></b></button>
-    <button data-go="rad"><span class="hz">部</span><b data-i="nvRad"></b></button>
-    <button data-go="ai"><span>💬</span><b data-i="nvAi"></b></button>
     <button data-go="plan"><span>📅</span><b data-i="nvPlan"></b></button>
+    <button data-go="quiz"><span>📝</span><b data-i="nvQuiz"></b></button>
+    <button data-go="cards"><span><svg class="nv-ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="2.5" width="12" height="16.5" rx="2.6" fill="#138594" transform="rotate(22 14 10.5)"/><rect x="6.5" y="3" width="12" height="17" rx="2.6" fill="#C41E26" transform="rotate(11 12.5 11.5)"/><rect x="3.5" y="3.5" width="13" height="18" rx="2.6" fill="#F9B13D"/><text x="10" y="16.4" text-anchor="middle" font-size="11" font-weight="700" fill="#fff" font-family="Noto Serif TC,serif">中</text></svg></span><b data-i="nvCards"></b></button>
+    <button data-go="ai"><span>💬</span><b data-i="nvAi"></b></button>
+    <button data-go="rad"><span class="hz">部</span><b data-i="nvRad"></b></button>
   </nav>
 
   <section id="v-list">
@@ -1002,7 +1002,7 @@ lgBadName:["กรุณากรอกชื่อเล่น","Please enter a
 lgOut:["ออกจากระบบ","Log out","Đăng xuất","ログアウト","로그아웃"],
 mpReview:["ทบทวน","Review","Ôn tập","復習","복습"],
 nvMap:["เส้นทาง","Path","Lộ trình","マップ","경로"], nvList:["เช็คลิสต์","Checklist","Danh sách","チェック","체크"], nvCards:["แฟลชการ์ด","Cards","Thẻ","カード","카드"],
-nvRad:["部首","Radicals","Bộ thủ","部首","부수"], nvAi:["คำสับสน","Confusables","Từ dễ nhầm","紛らわしい語","헷갈림"], nvPlan:["แผน","Plan","Kế hoạch","計画","계획"],
+nvRad:["เจาะอักษร","Characters","Bộ thủ","部首","부수"], nvAi:["คำสับสน","Confusables","Từ dễ nhầm","紛らわしい語","헷갈림"], nvPlan:["แผน","Plan","Kế hoạch","計画","계획"],
 mpRev:["ทบทวน 5 ด่าน","5-unit review","Ôn 5 bài","5ユニット復習","5단원 복습"],
 mpRevRange:["ด่าน {a}–{b}","Units {a}–{b}","Bài {a}–{b}","ユニット {a}–{b}","{a}–{b}단원"],
 mpBoss:["ทดสอบรวมระดับ","Level test","Kiểm tra cả cấp","レベル総合テスト","레벨 종합 테스트"],
