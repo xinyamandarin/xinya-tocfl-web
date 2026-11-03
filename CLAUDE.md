@@ -49,25 +49,29 @@ All files live in the owner's folder `สมุดคัดศัพท์Tocfl 
 | `TBCL/` folder | TBCL 14452 word list (Taiwan pinyin, used for sentence pinyin), grammar points, 破音字 database |
 | `TOCFL_詞彙學習計畫計算器.xlsx` | Study-plan calculator; its formulas are reimplemented in the 📅 Plan tab |
 
-### Embedded data in the page
+### `data/` — the live data the page loads (source of truth)
 
-| Name | Content |
-|---|---|
-| `W` | Word rows (see `words_all.json` above) |
-| `TR` | `no → [en, vi, ja, ko]` (AI drafts, Band A) |
-| `EXT` | `no → [[token, pinyin], …]` example sentences segmented with Taiwan pinyin (book pinyin first, then TBCL; 還 in 借/還 fixed to huán) |
-| `CONF` | Confusable groups |
-| `RAD` | `[n, radical, variants, th, en, cat, pinyin, strokes]` × 214 |
-| `CHR` | `char → [radical n, pinyin, firstLevel, enGloss, extraStrokes]` |
-| `TS` | Traditional → simplified char map (721 pairs) |
-| `CHAR_BUNDLE` | Character → level bundle in `hw/` |
+`index.html` fetches these at start-up (`<script type="module">`, boot overlay `#boot`). **Do not hand-edit them**: they are rebuilt from the Google Sheet by `scripts/sheet.py sync` (see §11).
+
+| File | In the page | Content |
+|---|---|---|
+| `words.json` | `W` | Word rows `[no, level, trad, simp, pinyin, pos, thai, page, exTrad, exThai, exEn, enGloss, exSimp]` |
+| `translations.json` | `TR` | `no → [en, vi, ja, ko]` (AI drafts, Band A). The sheet column `en` writes both `TR[no][0]` and `enGloss` |
+| `example_tokens.json` | `EXT` | `no → [[token, pinyin], …]` example sentences segmented with Taiwan pinyin |
+| `confusables.json` | `CONF` | Confusable groups `{id, lv, words, key, tip, items:[{w, py, lv, mean, use, ex:[{zh, th, src, tk}]}]}` |
+| `radicals214.json` | `RAD` | `[n, radical, variants, th, en, cat, pinyin, strokes]` × 214 |
+| `radical_notes.json` | `RB_RAW` | 22 radical lessons `[rad, py, th, cat, "字 py ความหมาย|…"]` |
+| `characters.json` | `CHR` | `char → [radical n, pinyin, firstLevel, enGloss, extraStrokes]` |
+| `trad_to_simp.json` | `TS` | Traditional → simplified char map |
+| `char_bundle.json` | `CHAR_BUNDLE` | Character → level bundle in `hw/` |
+| `ui_text.json` | overrides `I18N`, `RAD_CAT_I18N` (`radcat.*`), `RB_GROUPS_I18N` (`rbgroup.*`), `LANGS` | `{cols:[th,en,vi,ja,ko,…], langs:[{code,name,ai,on}], text:{key:{th,en,…}}}`. The code keeps the built-in strings as defaults; empty cells fall back to Thai. `LI()` uses the column order `LCOLS`, so a language can be switched on without the ones before it. |
 
 ## 4. Features (prototype v19)
 
 ### Login / sign-up (`#login`)
 - **Layout:**
   - Desktop: split screen. Left = form on a copybook-grid background; right = red hero panel.
-  - Hero panel: heart with 愛 + calligraphy 上華語, floating Taiwan map with 臺灣, sky lanterns (天燈), tagline "愛上華語 · 愛上臺灣".
+  - Hero panel: title text **TAIWAN TOCFL** (`.lg-title-txt`), floating map `img/taiwan-map.png`, sky lanterns (天燈), tagline "愛上華語 · 愛上臺灣".
   - Mobile: the hero becomes a top banner.
 - **Form:**
   - Tabs เข้าสู่ระบบ / สมัครสมาชิก; buttons Continue with **Google** / **Apple**; email + password.
@@ -98,7 +102,7 @@ All files live in the owner's folder `สมุดคัดศัพท์Tocfl 
 - **Bottom bar:** daily-goal card (from the plan) and 🧧 review (wrong words).
 
 ### 📋 Checklist
-- **Cards:** status buttons ยังไม่ได้ / ไม่แน่ใจ / จำได้; each character sits in a **田字格 copybook box**.
+- **Cards:** status buttons ยังไม่ได้ / ไม่แน่ใจ / จำได้. Characters are plain text: the owner removed the 田字格 boxes from the checklist and flashcards (commit 3d0165a). Do not add them back.
 - **Summary donut** for the level (known / not sure / don't know / unchecked) + simplified-difference stat.
 - **Simplified mode:** words whose 简 form differs are shown in **blue**; each level card shows "简 ต่าง n (p%)"; filter "เฉพาะคำที่ตัวย่อต่างจากตัวเต็ม".
 - **Search:** Chinese / pinyin / meaning / **word number** (`25`, `คำที่ 25`, `25-40`) across the whole band.
@@ -118,7 +122,8 @@ All files live in the owner's folder `สมุดคัดศัพท์Tocfl 
   - **confusable words** (sentence from `CONF`; interchangeable groups are excluded, `CONF_SKIP`)
 - **Toggles:** 拼 pinyin / 義 meaning.
 - **Feedback:** wrong answers show the correct answer, meaning and, for confusables, the key difference + tip.
-- **Scoring:** 10 pts, +5 combo from 3 correct in a row 🔥; stars ★ at 50/75/90 %; best score saved; sounds.
+- **Scoring:** 10 pts, +5 combo from 3 correct in a row 🔥; stars ★ at 50/75/90 %; best score saved.
+- **Answer effects:** a correct answer plays a "ding-ding" arpeggio (`cheer`) and shows a gold +points coin (`coinPop`, `.coin-fx`), with a bigger fanfare on a 3+ streak. A wrong answer plays `boo`. The coin respects reduced motion.
 - **Band B limit:** no sentences yet, so only meaning + confusable questions.
 
 ### 部首 Radicals
@@ -153,7 +158,7 @@ All files live in the owner's folder `สมุดคัดศัพท์Tocfl 
   - **Band B:** light green accent `#4F8A36`, soft `#E4F1D7`, row `#E7F2DC` / `#3D6E28`, bg `#F7FAF3`.
 - **Dark mode:** both bands and the map have dark tokens (map = night sky with glowing lanterns).
 - **Copybook feel:**
-  - 田字格 boxes around characters (`.tz`, colour from the band accent)
+  - `tzHTML()` / `.tz` 田字格 boxes still exist in the code but the checklist and flashcards no longer use them
   - faint grid paper on the login form
   - calligraphy masks as watermarks (`.cw` with `--m:url(img/…png)`, coloured by `currentColor`)
 - **Responsive:**
@@ -165,8 +170,7 @@ All files live in the owner's folder `สมุดคัดศัพท์Tocfl 
 
 - **One source only.** Load `hw/tw.json` (XIN-YA Taiwan overrides) first; if a character is not there, use the regular Hanzi Writer data.
 - **MOE comparison removed:** there is no comparison badge and no link to the 教育部 site in the UI. The MOE site is CC BY-NC-ND: never copy its data, only use it as a reference by eye.
-- **When the owner sends a new `hanzi-tw-strokes.zip`:**
-  - Merge every `hanzi-tw/*.json` (format `{strokes, medians}`) into `tw.json`.
+- **When the owner sends new Taiwan stroke files:** put them (or the `.zip`) in `hw/tw/`. The workflow `strokes.yml` runs `scripts/merge_strokes.py`, which validates them and rebuilds `hw/tw.json` keyed by the character itself (`"之"`). The page also accepts the old `"#U4e4b"` keys.
   - Keep the Arphic Public License text in the repo.
   - Keep the credit line "Hanzi Writer ปรับตามมาตรฐานไต้หวันโดย XIN-YA (Arphic Public License)".
 - **Known gap:** about 350 Band A/B characters differ from MOE order or count. Common causes:
@@ -194,6 +198,8 @@ All files live in the owner's folder `สมุดคัดศัพท์Tocfl 
 
   → In the new codebase use CSS Modules / Tailwind or a strict prefix per component, and never reuse a short global class name.
 - **Elements with `display:flex` ignore the `hidden` attribute.** Always add `[hidden]{display:none}` for them.
+- **`hw/tw.json` was keyed `#U4e4b` while the page looked up `tw["之"]`**, so the Taiwan strokes were never used until v20. Fixed both sides.
+- **Pinyin of shortened variants:** words like `桌(子)` gave the short form `桌` the pinyin `zhuōzi` (and 上 → shàngmiàn, 車 → chēzi …). 115 sentence tokens, 105 characters and 5 radicals were wrong. Fixed in v20. `scripts/pinyin_utils.py → pinyin_fits()` now checks that the syllable count matches the characters; keep using it.
 - Bob animations make Playwright clicks "unstable"; use `force: true` in tests.
 - The prototype is built by patch scripts. Do not copy that approach: port feature by feature into components.
 
@@ -210,7 +216,7 @@ All files live in the owner's folder `สมุดคัดศัพท์Tocfl 
    - privacy policy
    - security review (RLS, keys)
    - teacher review of AI-drafted content
-   - real `BOOK_URL`
+   - ~~real `BOOK_URL`~~ done (Band A e-book / Band B book pages)
 6. **Content to add:**
    - Band B example sentences (unlocks fill-blank and order questions for B)
    - Band B translations
@@ -222,5 +228,29 @@ All files live in the owner's folder `สมุดคัดศัพท์Tocfl 
 The prototype saves progress in `localStorage` under the key `xinya-bandA-v1`: `S = {lv, simp, st:{no:0|1|2}, tab, lang, plan, qb:{key:{b,s}}, wrong:[no], days:[ymd], auth, qpy, qmn}`.
 This becomes the shape of the Supabase `progress.data` column.
 
+## 11. Updating content (Google Sheet → website, automatic)
+
+```
+Google Sheet (team edits, ticks ✅)  ──daily 03:00 / Run workflow──▶  GitHub Action sync-sheet.yml
+   └─ scripts/sheet.py sync: download xlsx → only ✅ rows → validate → data/*.json (+ new chars → hw/)
+        └─ commit "data: sync from Google Sheet"  ──▶  Vercel redeploys
+hw/tw/*.json or *.zip  ──push──▶  strokes.yml → scripts/merge_strokes.py → hw/tw.json → commit → Vercel
+   (the zip from the 筆順 Stroke Editor artifact works as is; its README "In progress" characters are skipped)
+```
+
+- **Sheet tabs:** วิธีใช้ · คำศัพท์ · คำสับสน_กลุ่ม · คำสับสน_คำ · 部首214 · 部首_บทเรียน · ตัวอักษร · ข้อความเว็บ (UI text, one column per language; a new `Name [xx]` column adds a language) · ภาษา (code, menu name, English name for the AI prompt, `on`). Row 1 headers carry the key in brackets (`ความหมายไทย [thai]`); the script reads columns by that key, so columns can be moved but headers must keep `[key]`.
+- **Rules in `sync`:**
+  - Only rows with `✅ ขึ้นเว็บ [ok]` ticked are published. An edited row that is not ticked keeps the published version and shows in the report as pending.
+  - Rows are never deleted by the sync.
+  - New rows (new `no` / group `id`) are added when ticked.
+  - Blank `simp` / `ex_simp` are converted from traditional. A blank sentence-pinyin column means "keep / auto".
+  - A changed Chinese sentence is re-segmented with `pydict_base.json` plus the current word list. If the editor's pinyin line has the same number of words it is used; otherwise the auto pinyin is used and printed in the report for checking.
+  - UI text: every language must keep the same `{placeholders}` as Thai, or the row is skipped. New keys need code; unknown keys are skipped.
+  - When adding a UI string in code, add it to `I18N` **and** re-export the sheet (or add the row to `data/ui_text.json`), so teachers can see it.
+  - Bad rows are skipped with a warning; the run aborts without writing if words drop >5 % or radicals ≠ 214.
+- **Secrets (repo → Settings → Secrets → Actions):** `SHEET_ID` (required). `GOOGLE_SA_JSON` is optional: with it the sheet stays private and is shared only with the service account; without it the sheet must be "anyone with the link can view".
+- **Rebuild the sheet from current data:** `python scripts/sheet.py export XINYA_TOCFL_data.xlsx`. The round trip export → sync gives byte-identical JSON (tested).
+- `build_repo.py` (prototype builder) is retired. Do not regenerate `data/` from the old build files, or the v20 pinyin fixes are lost.
+
 ---
-*Prototype: Claude artifact "XIN-YA TOCFL Band A AI", version 19 (2026-11-03).*
+*Prototype: Claude artifact "XIN-YA TOCFL Band A AI", version 20 (2026-11-03): data split into `data/` + Google Sheet sync.*
