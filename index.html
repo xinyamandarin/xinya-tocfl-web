@@ -736,13 +736,14 @@ body.band-b .lv[aria-pressed="true"],body.band-a .lv[aria-pressed="true"]{border
 <div id="boot" style="position:fixed;inset:0;z-index:99;display:flex;align-items:center;justify-content:center;background:#fffaf1;color:#cc2027;font:600 16px Sarabun,sans-serif">กำลังโหลด… Loading…</div>
 <script type="module">
 // data lives in data/*.json — generated from the XIN-YA Google Sheet by .github/workflows/sync-sheet.yml
-const DATA_FILES = ["words","translations","char_bundle","example_tokens","trad_to_simp","confusables","radicals214","characters","radical_notes"];
+const DATA_FILES = ["words","translations","char_bundle","example_tokens","trad_to_simp","confusables","radicals214","characters","radical_notes","ui_text"];
 let DATA;
 try { DATA = Object.fromEntries(await Promise.all(DATA_FILES.map(async k => { const r = await fetch(`data/${k}.json`, {cache:"no-cache"}); if(!r.ok) throw new Error(k); return [k, await r.json()]; }))); }
 catch(e){ document.getElementById("boot").textContent = "โหลดข้อมูลไม่สำเร็จ ("+e.message+") — ลองรีเฟรชหน้า"; throw e; }
 
 // UI strings: key -> [th, en, vi, ja, ko]
-const LANGS = [["th","ไทย"],["en","English"]];   // vi/ja/ko strings are kept below for later
+let LANGS = [["th","ไทย"],["en","English"]];   // replaced by data/ui_text.json → langs (on)
+const LCOLS = ["th","en","vi","ja","ko"];      // column order of every I18N row; extra languages are appended   // vi/ja/ko strings are kept below for later
 const LANG_NAME = {th:"Thai",en:"English",vi:"Vietnamese",ja:"Japanese",ko:"Korean"};
 const I18N = {
 brand:["XIN-YA Mandarin · ตัวต้นแบบ","XIN-YA Mandarin · Prototype","XIN-YA Mandarin · Bản mẫu","XIN-YA Mandarin · プロトタイプ","XIN-YA Mandarin · 시제품"],
@@ -1065,7 +1066,7 @@ try{ Object.assign(S, JSON.parse(localStorage.getItem(KEY)||"{}")); }catch(e){}
 const save = () => { try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} };
 const $ = s => document.querySelector(s);
 const esc = s => String(s??"").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-const LI = () => Math.max(0, LANGS.findIndex(l=>l[0]===S.lang));
+const LI = () => Math.max(0, LCOLS.indexOf(S.lang));
 const t = (k, v={}) => { const row=I18N[k]; let s=row ? (row[LI()] ?? row[0]) : k; for(const n in v) s=s.split("{"+n+"}").join(v[n]); return s; };
 const hz = w => S.simp ? w[3] : w[2];
 const tzHTML = h => [...h].map(c=>/[\u3400-\u9fff]/.test(c)?`<span class="tz">${esc(c)}</span>`:esc(c)).join("");
@@ -1081,6 +1082,17 @@ const canSee = w => !isTrial() || FREE.has(w[0]);
 const FREE_CF = new Set(); LV.forEach(([k])=>CONF.filter(g=>g.lv===k).slice(0,2).forEach(g=>FREE_CF.add(g.id)));
 const cfOpen = g => !isTrial() || FREE_CF.has(g.id);
 const lvAll = lv => W.filter(w=>w[1]===lv);
+// UI text from the Google Sheet (data/ui_text.json) overrides the built-in strings; empty cells fall back to Thai
+(function applyUiText(U){ if(!U||!U.text) return;
+  (U.cols||[]).forEach(c=>{ if(!LCOLS.includes(c)) LCOLS.push(c); });
+  const put=(tbl,k,row,addNew)=>{ if(!tbl[k]){ if(!addNew) return; tbl[k]=[]; } const r=tbl[k]; for(const c in row){ if(row[c]) r[LCOLS.indexOf(c)]=row[c]; } };
+  for(const k in U.text){ const row=U.text[k];
+    if(k.startsWith("radcat.")) put(RAD_CAT_I18N,k.slice(7),row,false);
+    else if(k.startsWith("rbgroup.")) put(RB_GROUPS_I18N,k.slice(8),row,false);
+    else put(I18N,k,row,true); }
+  const on=(U.langs||[]).filter(l=>l.on);
+  if(on.length){ LANGS=on.map(l=>[l.code,l.name]); on.forEach(l=>{ if(!LANG_NAME[l.code]) LANG_NAME[l.code]=l.ai||l.name; }); }
+})(DATA.ui_text);
 if(!LANGS.some(l=>l[0]===S.lang)) S.lang="th";
 function paywall(){ const d=$("#pay"); $("#payBuy").href=bookUrl(); try{ d.showModal(); }catch(e){ d.setAttribute("open",""); } }
 const closePay = () => { try{$("#pay").close();}catch(e){$("#pay").removeAttribute("open");} };
@@ -1627,7 +1639,7 @@ const L1_TIPS = {
 const SYS = () => `You are "AI 老師", the Chinese tutor of XIN-YA Mandarin, helping learners prepare for TOCFL Band A–B (Novice to B2).
 Use Taiwan traditional characters${S.simp?" (the learner prefers simplified characters, so write Chinese in simplified)":""}. Give pinyin for Chinese examples.
 Write every explanation in ${LANG_NAME[S.lang]}. Keep Chinese vocabulary within the level of the word asked about. Be concise.
-${L1_TIPS[S.lang]}
+${L1_TIPS[S.lang]||""}
 Do not use markdown headings (#) or bold (**); use plain text with line breaks.`;
 async function ask(prompt, out){
   await aiReady;

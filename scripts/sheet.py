@@ -52,7 +52,30 @@ TABS = OrderedDict([
     ("ตัวอักษร", dict(key=["char"], cols=[
         ("char", "ตัวอักษร", 8, True), ("rad_no", "部首เลขที่ (1–214)", 10, False), ("pinyin", "พินอิน", 10, True),
         ("en", "ความหมายอังกฤษ", 34, True), ("extra", "ขีดนอก部首", 8, False)])),
+    ("ข้อความเว็บ", dict(key=["key"], cols=[
+        ("key", "รหัสข้อความ", 16, True), ("section", "อยู่ส่วนไหนของเว็บ (ไว้ดูเฉย ๆ)", 16, True),
+        ("th", "ไทย", 40, True), ("en", "English", 40, True), ("vi", "Tiếng Việt", 30, True),
+        ("ja", "日本語", 30, True), ("ko", "한국어", 30, True)])),
+    ("ภาษา", dict(key=["code"], cols=[
+        ("code", "รหัสภาษา", 8, True), ("name", "ชื่อที่แสดงในเมนู", 16, True),
+        ("ai", "ชื่อภาษาอังกฤษ (ใช้สั่ง AI)", 18, True), ("on", "เปิดใช้บนเว็บ", 10, False)])),
 ])
+LANG_RE = re.compile(r"^[a-z]{2,3}(?:_[a-z]{2,4})?$")
+NOT_LANG = {"key", "section", "ok", "note"}
+SECTIONS = [("pl", "📅 แผนการเรียน"), ("lg", "หน้าเข้าสู่ระบบ"), ("qz", "✍️ แบบทดสอบ"), ("quiz", "✍️ แบบทดสอบ"),
+            ("q", "✍️ แบบทดสอบ"), ("rb", "部首"), ("radcat.", "部首 · หมวด"), ("rbgroup.", "部首 · กลุ่ม"), ("r", "部首"),
+            ("mp", "🏮 เส้นทาง (หน้าแรก)"), ("cf", "💬 คำที่มักสับสน"), ("pw", "หน้าต่างซื้อหนังสือ"), ("st", "📋 เช็คลิสต์ · สถิติ"),
+            ("ai", "💬 AI 老師"), ("ask", "💬 AI 老師"), ("thinking", "💬 AI 老師"), ("nv", "เมนูล่าง (มือถือ)"),
+            ("tr", "แถบโหมดทดลอง"), ("tab", "แท็บด้านบน"), ("hw", "ลำดับขีด"), ("fc", "🃏 แฟลชการ์ด"), ("flip", "🃏 แฟลชการ์ด")]
+
+
+def section_of(k):
+    for pre, name in SECTIONS:
+        if k.startswith(pre) and (pre.endswith(".") or len(k) == len(pre) or not k[len(pre)].islower()):
+            return name
+    return "ทั่วไป"
+
+
 AUTO = {"simp", "ex_simp", "ex_py", "ex1_py", "ex2_py"}
 TAIL = [("ok", "✅ ขึ้นเว็บ", 10, False), ("note", "หมายเหตุผู้ตรวจ (ไม่ขึ้นเว็บ)", 30, True)]
 
@@ -97,6 +120,16 @@ class Store:
         self.notes = load("radical_notes", [])
         self.chars = load("characters", {})
         self.bundle = load("char_bundle", {})
+        self.ui = load("ui_text", {"cols": ["th", "en"], "langs": [], "text": {}})
+
+    def cols(self, tab):
+        """Columns of a tab; the UI-text tab gets one extra column per added language."""
+        cols = list(TABS[tab]["cols"])
+        if tab == "ข้อความเว็บ":
+            have = {k for k, *_ in cols}
+            names = {l["code"]: l["name"] for l in self.ui.get("langs", [])}
+            cols += [(c, names.get(c, c), 30, True) for c in self.ui.get("cols", []) if c not in have]
+        return cols
 
     # words ---------------------------------------------------------------
     def word_row(self, w):
@@ -133,6 +166,10 @@ class Store:
             return [dict(rad=r[0], py=r[1], th=r[2], cat=r[3], examples=r[4]) for r in self.notes]
         if tab == "ตัวอักษร":
             return [dict(char=c, rad_no=v[0], pinyin=v[1], en=v[3], extra=v[4]) for c, v in self.chars.items()]
+        if tab == "ข้อความเว็บ":
+            return [dict(key=k, section=section_of(k), **v) for k, v in self.ui["text"].items()]
+        if tab == "ภาษา":
+            return [dict(code=l["code"], name=l["name"], ai=l.get("ai", ""), on=bool(l.get("on"))) for l in self.ui["langs"]]
         raise KeyError(tab)
 
 
@@ -162,6 +199,13 @@ def export(path):
         ("7) ลบแถวในชีต ไม่ได้ลบออกจากเว็บ (กันพลาด) ถ้าต้องลบจริง แจ้งผู้ดูแลระบบ", False),
         ("8) หมวด部首: " + ", ".join(RAD_CATS) + "  ·  ระดับ: " + ", ".join(LEVELS), False),
         ("9) ที่มาประโยค: TBCL = คลังคำ TBCL, BK = หนังสือ, AI = แต่งโดย AI (ควรตรวจ)", False),
+        ("", False),
+        ("ข้อความบนหน้าเว็บ (แท็บ ข้อความเว็บ)", True),
+        ("10) แก้คำผิด/สำนวนของปุ่มและข้อความต่าง ๆ ได้ทุกภาษา ห้ามแก้ช่องรหัสข้อความ", False),
+        ("11) ข้อความที่มี {n} {lv} ฯลฯ คือช่องที่ระบบเติมตัวเลข/ชื่อให้ ทุกภาษาต้องมีช่องเหล่านี้ครบเหมือนภาษาไทย", False),
+        ("12) ช่องที่เว้นว่าง เว็บจะแสดงภาษาไทยแทน", False),
+        ("13) เพิ่มภาษาใหม่: (ก) แท็บ ภาษา เพิ่มแถว รหัส เช่น id, ชื่อ Bahasa Indonesia, ชื่ออังกฤษ Indonesian", False),
+        ("    (ข) แท็บ ข้อความเว็บ เพิ่มคอลัมน์ใหม่ หัวตาราง เช่น  Bahasa Indonesia [id]  แล้วแปลทีละแถว  (ค) แปลครบแล้วค่อยติ๊ก เปิดใช้บนเว็บ", False),
     ]
     for i, (t, b) in enumerate(lines, 1):
         how.cell(i, 1, t).font = Font(bold=b, size=14 if b else 11)
@@ -172,7 +216,7 @@ def export(path):
     key_fill = PatternFill("solid", fgColor="EEEEEE")
     for tab, spec in TABS.items():
         ws = wb.create_sheet(tab)
-        cols = spec["cols"] + TAIL
+        cols = st.cols(tab) + TAIL
         for j, (k, th, wdt, _) in enumerate(cols, 1):
             c = ws.cell(1, j, f"{th} [{k}]")
             c.font = Font(bold=True)
@@ -185,6 +229,8 @@ def export(path):
         for i, r in enumerate(rows, 2):
             for j, (k, _, _, is_text) in enumerate(cols, 1):
                 v = True if k == "ok" else r.get(k, "")
+                if k == "on":
+                    v = bool(v)
                 c = ws.cell(i, j, v if v != "" else None)
                 if is_text:
                     c.number_format = "@"
@@ -198,6 +244,9 @@ def export(path):
         if tab == "คำศัพท์":
             dl = DataValidation(type="list", formula1='"' + ",".join(LEVELS) + '"', allow_blank=False)
             ws.add_data_validation(dl); dl.add(f"B2:B{last}")
+        if tab == "ภาษา":
+            don = DataValidation(type="list", formula1='"TRUE,FALSE"', allow_blank=True)
+            ws.add_data_validation(don); don.add(f"D2:D{last}")
         if tab == "部首214":
             dc = DataValidation(type="list", formula1='"' + ",".join(RAD_CATS) + '"', allow_blank=False)
             ws.add_data_validation(dc); dc.add(f"F2:F{last}")
@@ -322,8 +371,11 @@ def sync(sheet, fetch_new=False):
     base = json.load(open(os.path.join(os.path.dirname(__file__), "pydict_base.json"), encoding="utf-8"))
 
     def diff(tab, pub, new, label):
+        keys = [k for k, *_ in st.cols(tab) if k != "section"]
+        if tab == "ข้อความเว็บ":  # a language column added in the sheet
+            keys += [k for k in new if LANG_RE.match(k) and k not in NOT_LANG and k not in keys]
         # a blank "auto" column (simplified forms, sentence pinyin) means "work it out" — not a change
-        return [k for k, *_ in TABS[tab]["cols"]
+        return [k for k in keys
                 if norm(new.get(k)) != norm(pub.get(k)) and not (k in AUTO and norm(new.get(k)) == "")]
 
     def changes_for(tab, label_fn):
@@ -489,6 +541,46 @@ def sync(sheet, fetch_new=False):
         else:
             rep.added.append(f"ตัวอักษร {c}")
 
+    # ---- UI text + languages
+    ui = st.ui
+    for ch in changes_for("ภาษา", lambda r: norm(r.get("code"))):
+        r = ch[1]
+        code = norm(r["code"]).lower()
+        if not LANG_RE.match(code) or not norm(r.get("name")):
+            rep.warn.append(f"ภาษา แถว {r['_row']}: รหัส “{code}” ต้องเป็นตัวอักษรภาษาอังกฤษ 2–3 ตัว และต้องมีชื่อ — ข้าม"); continue
+        row = dict(code=code, name=norm(r.get("name")), ai=norm(r.get("ai")) or norm(r.get("name")), on=is_ok(r.get("on")))
+        old = next((l for l in ui["langs"] if l["code"] == code), None)
+        if old:
+            old.update(row); log("ภาษา", r, ch[2], ch[0])
+        else:
+            ui["langs"].append(row); rep.added.append(f"ภาษาใหม่ {code} {row['name']}")
+        if code not in ui["cols"]:
+            ui["cols"].append(code)
+    if not any(l["on"] and l["code"] == "th" for l in ui["langs"]):
+        rep.warn.append("ภาษา: ต้องเปิดใช้ภาษาไทย (th) เสมอ — เปิดให้อัตโนมัติ")
+        for l in ui["langs"]:
+            if l["code"] == "th":
+                l["on"] = True
+    ph = re.compile(r"\{\w+\}")
+    for ch in changes_for("ข้อความเว็บ", lambda r: norm(r.get("key"))):
+        r = ch[1]
+        k = norm(r["key"])
+        if ch[0] is None:
+            rep.warn.append(f"ข้อความเว็บ แถว {r['_row']}: ไม่มีรหัส “{k}” ในเว็บ — ข้าม (เพิ่มรหัสใหม่ต้องแก้โค้ด)"); continue
+        langs = [c for c in r if LANG_RE.match(c) and c not in NOT_LANG]
+        val = {c: norm(r.get(c)) for c in langs if norm(r.get(c))}
+        if not val.get("th") and ch[0].get("th"):
+            rep.warn.append(f"ข้อความเว็บ {k}: ช่องภาษาไทยว่าง — ข้าม"); continue
+        want = sorted(ph.findall(val["th"]))
+        bad = [c for c, v in val.items() if sorted(ph.findall(v)) != want]
+        if bad:
+            rep.warn.append(f"ข้อความเว็บ {k}: ภาษา {', '.join(bad)} ต้องมีช่องเติมคำ {' '.join(want) or '(ไม่มี)'} เหมือนภาษาไทย — ข้าม"); continue
+        for c in val:
+            if c not in ui["cols"]:
+                ui["cols"].append(c)
+        ui["text"][k] = val
+        log("ข้อความเว็บ", r, ch[2], ch[0])
+
     # ---- derived: first level of each character, new characters
     ORD = {k: i for i, k in enumerate(LEVELS)}
     first = {}
@@ -513,6 +605,7 @@ def sync(sheet, fetch_new=False):
     save("words", st.words); save("translations", st.tr); save("example_tokens", st.ext)
     save("trad_to_simp", st.ts); save("confusables", st.conf); save("radicals214", sorted(rmap.values()))
     save("radical_notes", st.notes); save("characters", st.chars); save("char_bundle", st.bundle)
+    save("ui_text", ui)
     rep.counts = counts
     return rep
 

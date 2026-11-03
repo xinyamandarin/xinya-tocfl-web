@@ -64,6 +64,7 @@ All files live in the owner's folder `สมุดคัดศัพท์Tocfl 
 | `characters.json` | `CHR` | `char → [radical n, pinyin, firstLevel, enGloss, extraStrokes]` |
 | `trad_to_simp.json` | `TS` | Traditional → simplified char map |
 | `char_bundle.json` | `CHAR_BUNDLE` | Character → level bundle in `hw/` |
+| `ui_text.json` | overrides `I18N`, `RAD_CAT_I18N` (`radcat.*`), `RB_GROUPS_I18N` (`rbgroup.*`), `LANGS` | `{cols:[th,en,vi,ja,ko,…], langs:[{code,name,ai,on}], text:{key:{th,en,…}}}`. The code keeps the built-in strings as defaults; empty cells fall back to Thai. `LI()` uses the column order `LCOLS`, so a language can be switched on without the ones before it. |
 
 ## 4. Features (prototype v19)
 
@@ -234,15 +235,18 @@ Google Sheet (team edits, ticks ✅)  ──daily 03:00 / Run workflow──▶ 
    └─ scripts/sheet.py sync: download xlsx → only ✅ rows → validate → data/*.json (+ new chars → hw/)
         └─ commit "data: sync from Google Sheet"  ──▶  Vercel redeploys
 hw/tw/*.json or *.zip  ──push──▶  strokes.yml → scripts/merge_strokes.py → hw/tw.json → commit → Vercel
+   (the zip from the 筆順 Stroke Editor artifact works as is; its README "In progress" characters are skipped)
 ```
 
-- **Sheet tabs:** วิธีใช้ · คำศัพท์ · คำสับสน_กลุ่ม · คำสับสน_คำ · 部首214 · 部首_บทเรียน · ตัวอักษร. Row 1 headers carry the key in brackets (`ความหมายไทย [thai]`); the script reads columns by that key, so columns can be moved but headers must keep `[key]`.
+- **Sheet tabs:** วิธีใช้ · คำศัพท์ · คำสับสน_กลุ่ม · คำสับสน_คำ · 部首214 · 部首_บทเรียน · ตัวอักษร · ข้อความเว็บ (UI text, one column per language; a new `Name [xx]` column adds a language) · ภาษา (code, menu name, English name for the AI prompt, `on`). Row 1 headers carry the key in brackets (`ความหมายไทย [thai]`); the script reads columns by that key, so columns can be moved but headers must keep `[key]`.
 - **Rules in `sync`:**
   - Only rows with `✅ ขึ้นเว็บ [ok]` ticked are published. An edited row that is not ticked keeps the published version and shows in the report as pending.
   - Rows are never deleted by the sync.
   - New rows (new `no` / group `id`) are added when ticked.
   - Blank `simp` / `ex_simp` are converted from traditional. A blank sentence-pinyin column means "keep / auto".
   - A changed Chinese sentence is re-segmented with `pydict_base.json` plus the current word list. If the editor's pinyin line has the same number of words it is used; otherwise the auto pinyin is used and printed in the report for checking.
+  - UI text: every language must keep the same `{placeholders}` as Thai, or the row is skipped. New keys need code; unknown keys are skipped.
+  - When adding a UI string in code, add it to `I18N` **and** re-export the sheet (or add the row to `data/ui_text.json`), so teachers can see it.
   - Bad rows are skipped with a warning; the run aborts without writing if words drop >5 % or radicals ≠ 214.
 - **Secrets (repo → Settings → Secrets → Actions):** `SHEET_ID` (required). `GOOGLE_SA_JSON` is optional: with it the sheet stays private and is shared only with the service account; without it the sheet must be "anyone with the link can view".
 - **Rebuild the sheet from current data:** `python scripts/sheet.py export XINYA_TOCFL_data.xlsx`. The round trip export → sync gives byte-identical JSON (tested).
