@@ -512,6 +512,48 @@ body.band-b{--bg:#f7faf3;--surface:#fff;--fg:#2c3028;--muted:#6e7a67;--line:#e1e
 :root[data-theme="dark"] body.band-b{--bg:#141913;--surface:#1c231a;--fg:#eef3e9;--muted:#a3b09b;--line:#2e3a29;--pink:#9fd07f;--pink-soft:#253520;--mint:#22331c;--mint-ink:#a9d68c}
 body.band-b .lv[aria-pressed="true"],body.band-a .lv[aria-pressed="true"]{border-color:var(--pink);box-shadow:0 0 0 3px var(--pink-soft)}
 .tab.lckd{opacity:.6}
+
+/* ===== first-visit tour (prefix ob-) ===== */
+.ob-ov{position:fixed;inset:0;z-index:95;background:rgba(60,12,14,.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:16px}
+.ob-ov[hidden]{display:none}
+.ob-box{position:relative;width:min(440px,100%);max-height:calc(100vh - 32px);overflow:auto;background:var(--surface);color:var(--fg);border-radius:26px;padding:26px 24px 22px;
+  box-shadow:0 0 0 5px var(--xy-cream),0 24px 60px -16px rgba(60,0,0,.55);display:flex;flex-direction:column;align-items:center;text-align:center;gap:12px}
+.ob-box::before{content:"";position:absolute;left:0;right:0;top:0;height:7px;background:linear-gradient(90deg,var(--xy-red),var(--xy-pink),var(--xy-cream),#5fb7b4)}
+.ob-skip{position:absolute;top:14px;right:16px;font:inherit;font-size:13px;color:var(--muted);background:none;border:0;cursor:pointer;padding:4px 6px}
+.ob-ic{width:84px;height:84px;border-radius:50%;background:var(--pink-soft);display:flex;align-items:center;justify-content:center;font-size:40px;margin-top:8px}
+.ob-ic svg{width:46px;height:46px} .ob-ic .hz{font-family:var(--f-hz);font-weight:900;font-size:40px;color:var(--xy-red)}
+.ob-k{font-size:12px;font-weight:700;letter-spacing:.12em;color:var(--xy-red);text-transform:uppercase}
+.ob-box h2{margin:0;font-size:24px;line-height:1.3;color:var(--xy-red)} .ob-box h2 .x{font-family:var(--f-hz)}
+.ob-box p{margin:0;font-size:15px;color:var(--fg);max-width:360px}
+.ob-demo{width:100%;min-height:118px;border-radius:18px;background:linear-gradient(135deg,var(--pink-soft),color-mix(in srgb,var(--xy-cream) 30%,var(--surface)));display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;padding:16px}
+.ob-dots{display:flex;gap:7px} .ob-dots i{width:8px;height:8px;border-radius:8px;background:var(--line);transition:width .2s,background .2s} .ob-dots i.on{width:22px;background:var(--xy-red)}
+.ob-nav{display:flex;gap:10px;width:100%}
+.ob-nav button{font:inherit;font-weight:700;font-size:16px;border:0;border-radius:999px;padding:13px 18px;cursor:pointer}
+.ob-back{background:var(--pink-soft);color:var(--xy-red)} .ob-back[hidden]{display:none}
+.ob-next{flex:1;color:#fff;background:linear-gradient(90deg,var(--xy-red),#e2413f 60%,var(--xy-pink));box-shadow:0 8px 18px -8px rgba(204,32,39,.7)}
+/* demo pieces */
+.ob-hz{font-family:var(--f-hz)} .ob-ar{color:var(--muted);font-size:20px}
+.ob-lv{font-size:12px;font-weight:700;padding:5px 10px;border-radius:999px;background:var(--surface);color:var(--xy-red);border:1px solid var(--line)}
+.ob-n{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;background:var(--xy-red);color:var(--xy-cream);font-size:18px}
+.ob-n.cur{box-shadow:0 0 0 5px rgba(248,206,124,.7);animation:obGlow 1.6s ease-in-out infinite} .ob-n.lock{background:var(--line);color:var(--muted)}
+@keyframes obGlow{50%{box-shadow:0 0 0 9px rgba(248,206,124,.35)}}
+.ob-dash{width:14px;border-top:3px dashed var(--xy-pink)}
+.ob-w{background:var(--surface);border-radius:14px;padding:8px 14px;display:flex;flex-direction:column;align-items:center;border:1px solid var(--line)}
+.ob-w b{font-family:var(--f-hz);font-size:28px;font-weight:600;line-height:1.2} .ob-w small{color:var(--muted)}
+.ob-st{display:flex;flex-direction:column;gap:5px} .ob-st span{font-size:12px;font-weight:700;border-radius:999px;padding:4px 12px}
+.ob-st .s0{background:#f6dcdc;color:#b8383c} .ob-st .s1{background:#f8ecc9;color:#a77a10} .ob-st .s2{background:#d8efe1;color:#2a7a4c;box-shadow:0 0 0 2px #2a7a4c}
+.ob-pl{display:flex;flex-direction:column;gap:4px;font-size:14px;text-align:left} .ob-pl b{font-size:22px;color:var(--xy-red)}
+.ob-q{font-family:var(--f-hz);font-size:24px;display:flex;align-items:center;gap:4px} .ob-q .bl{border:2px dashed var(--xy-red);border-radius:8px;padding:0 8px;color:var(--xy-red);background:var(--surface)}
+.ob-opt{font-family:var(--f-hz);font-size:20px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:4px 12px} .ob-opt.ok{background:#d8efe1;border-color:#2a7a4c;color:#2a7a4c}
+.ob-row{display:flex;gap:8px;align-items:center;justify-content:center;width:100%;flex-wrap:wrap}
+.ob-fc{width:86px;height:100px;border-radius:14px;background:var(--surface);border:1px solid var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;box-shadow:0 6px 14px -8px rgba(0,0,0,.3)}
+.ob-fc b{font-family:var(--f-hz);font-size:28px;font-weight:600} .ob-fc small{font-size:12px;color:var(--muted)} .ob-fc .m{background:var(--mint);color:var(--mint-ink);border-radius:8px;padding:1px 8px;font-size:13px}
+.ob-bub{background:var(--surface);border-radius:16px 16px 16px 4px;padding:8px 12px;font-size:13px;text-align:left;max-width:240px;border:1px solid var(--line)}
+.ob-chip{font-family:var(--f-hz);font-size:20px;background:var(--surface);border:1px solid var(--xy-pink);color:var(--xy-red);border-radius:999px;padding:2px 14px}
+.ob-rad{width:58px;height:58px;border-radius:50%;background:var(--xy-red);color:#fff;font-family:var(--f-hz);font-size:30px;display:flex;align-items:center;justify-content:center}
+.ob-sm{width:40px;height:40px;border-radius:50%;background:var(--surface);border:1px solid var(--line);font-family:var(--f-hz);font-size:20px;display:flex;align-items:center;justify-content:center}
+@media (max-width:420px){.ob-box{padding:24px 18px 18px}.ob-box h2{font-size:21px}.ob-ic{width:72px;height:72px;font-size:34px}}
+@media (prefers-reduced-motion:reduce){.ob-n.cur{animation:none}}
 </style>
 </head>
 <body>
@@ -1972,9 +2014,59 @@ function renderAll(){
   if(S.tab==="plan") renderPlan();
   if(S.tab==="map") renderMap();
 }
+
+// ---------- first-visit tour ----------
+Object.assign(I18N,{
+obSkip:["ข้าม","Skip"], obBack:["ย้อน","Back"], obNext:["ต่อไป","Next"], obGo:["เริ่มเลย!","Let's start!"], obStart:["เริ่มทัวร์","Take the tour"],
+ob0k:["ยินดีต้อนรับ","Welcome"], ob0t:["พิชิตศัพท์ TOCFL<br>กับ <span class=x>XIN-YA</span>","Master TOCFL vocabulary<br>with <span class=x>XIN-YA</span>"],
+ob0p:["ศัพท์ 4,735 คำจากหนังสือเก็งศัพท์ Band A–B ตัวเต็มแบบไต้หวัน มีพินอินและเสียงทุกคำ มาดูกันว่าใช้อะไรได้บ้าง","4,735 words from the XIN-YA Band A–B books, Taiwan traditional characters, with pinyin and audio for every word. Here is what you can do."],
+ob1t:["เส้นทาง","The path"], ob1p:["เรียนเป็นด่าน ด่านละ 20 คำ ผ่านด่านได้ดาว ★ มีด่านทบทวน 🧧 และสอบใหญ่ท้ายระดับ","Learn in units of 20 words. Pass a unit to earn stars ★, with 🧧 review stops and a final level test."],
+ob2t:["เช็คลิสต์","Checklist"], ob2p:["ติ๊กทุกคำว่า จำได้ · ไม่แน่ใจ · ยังไม่ได้ แล้วดูสรุปความคืบหน้าของแต่ละระดับ","Mark every word as known, not sure or not yet, and see your progress for each level."],
+ob3t:["แผนการเรียน","Study plan"], ob3p:["ใส่วันสอบ ระบบคำนวณให้ว่าต้องจำวันละกี่คำ ใช้เวลากี่นาที และวันนี้ต้องท่องคำไหน","Enter your exam date and get how many words a day, how many minutes, and today's words."],
+ob4t:["แบบทดสอบ","Quiz"], ob4p:["4 แบบในชุดเดียว: ความหมาย เติมคำ เรียงประโยค คำสับสน ตอบถูกติดกันได้คอมโบ 🔥","Four question types: meaning, fill the blank, word order and confusables. Get 3 in a row for a 🔥 combo."],
+ob5t:["แฟลชการ์ด","Flashcards"], ob5p:["เริ่มจากคำที่ยังจำไม่ได้ก่อน พลิกดูคำตอบ ฟังเสียงคำและประโยค ดูลำดับขีดได้ทันที","Weakest words come first. Flip for the answer, hear the word and sentence, and see stroke order."],
+ob6t:["คำสับสน · ถาม AI 老師","Confusables · Ask AI 老師"], ob6p:["คำที่คล้ายกันอย่าง 會 / 能 / 可以 อธิบายเป็นภาษาไทยพร้อมตัวอย่าง สงสัยตรงไหนถาม AI 老師 เพิ่มได้","Look-alike words such as 會 / 能 / 可以 explained with examples. Still unsure? Ask AI 老師."],
+ob7t:["เจาะอักษร","Characters"], ob7p:["แยกตัวอักษรตามหมวด 部首 เห็นตระกูลตัวอักษร จำง่ายขึ้นและเดาความหมายได้","Explore characters by radical (部首) and see each family, so new characters are easier to remember."],
+ob6b:["會 = ทำได้เพราะเรียนมา<br>能 = มีความสามารถ / สถานการณ์เอื้อ","會 = can, because you learned it<br>能 = able to / circumstances allow"]
+});
+const OB_CHK=`<svg viewBox="0 0 24 24" aria-hidden="true"><g fill="#7a7a7a"><rect x="2" y="2.5" width="8.5" height="8.5" rx="2"/><rect x="2" y="13" width="8.5" height="8.5" rx="2"/></g><g fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6.8l1.7 1.7 3-3.3"/><path d="M4 17.3l1.7 1.7 3-3.3"/></g><g stroke="#b9b1b1" stroke-width="1.2" stroke-linecap="round"><path d="M13 6.8h9"/><path d="M13 17.3h9"/></g></svg>`;
+const OB_CARDS=`<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="2.5" width="12" height="16.5" rx="2.6" fill="#138594" transform="rotate(22 14 10.5)"/><rect x="6.5" y="3" width="12" height="17" rx="2.6" fill="#C41E26" transform="rotate(11 12.5 11.5)"/><rect x="3.5" y="3.5" width="13" height="18" rx="2.6" fill="#F9B13D"/><text x="10" y="16.4" text-anchor="middle" font-size="11" font-weight="700" fill="#fff" font-family="Noto Serif TC,serif">中</text></svg>`;
+const OB = [
+  {ic:`<img src="img/lantern.png" alt="" style="width:58px">`, k:"ob0k", tt:"ob0t", p:"ob0p",
+   demo:()=>["Novice 1","Novice 2","A1","A2","B1","B2"].map(x=>`<span class="ob-lv">${x}</span>`).join("")},
+  {ic:"🏮", tt:"ob1t", p:"ob1p", demo:()=>`<span class="ob-n">★</span><span class="ob-dash"></span><span class="ob-n">★</span><span class="ob-dash"></span><span class="ob-n cur">3</span><span class="ob-dash"></span><span class="ob-n lock">🧧</span>`},
+  {ic:OB_CHK, tt:"ob2t", p:"ob2p", demo:()=>`<div class="ob-w"><b>謝謝</b><small>xièxie · ขอบคุณ</small></div><div class="ob-st"><span class="s0">${t("s0")}</span><span class="s1">${t("s1")}</span><span class="s2">✓ ${t("s2")}</span></div>`},
+  {ic:"📅", tt:"ob3t", p:"ob3p", demo:()=>`<div class="ob-pl"><span>📆 ${LI()?"Exam":"สอบ"} 15/03/2027</span><b>${LI()?"18 words / day":"วันละ 18 คำ"}</b><span class="muted">⏱ ${LI()?"about 25 min":"ประมาณ 25 นาที"}</span></div>`},
+  {ic:"📝", tt:"ob4t", p:"ob4p", demo:()=>`<div class="ob-row"><span class="ob-q">她是<span class="bl">女</span>老師。</span></div><div class="ob-row"><span class="ob-opt">孩子</span><span class="ob-opt">小姐</span><span class="ob-opt ok">女 ✓</span></div>`},
+  {ic:OB_CARDS, tt:"ob5t", p:"ob5p", demo:()=>`<div class="ob-fc"><b>你好</b></div><span class="ob-ar">↻</span><div class="ob-fc"><small>nǐhǎo 🔊</small><span class="m">${LI()?"hello":"สวัสดี"}</span></div>`},
+  {ic:"💬", tt:"ob6t", p:"ob6p", demo:()=>`<div class="ob-row"><span class="ob-chip">會</span><span class="ob-chip">能</span><span class="ob-chip">可以</span></div><div class="ob-bub">🤖 ${t("ob6b")}</div>`},
+  {ic:`<span class="hz">部</span>`, tt:"ob7t", p:"ob7p", demo:()=>`<span class="ob-rad">女</span><span class="ob-ar">→</span>${["好","媽","姐","妹"].map(c=>`<span class="ob-sm">${c}</span>`).join("")}`}
+];
+let obI=0;
+function renderTour(){
+  const o=OB[obI], last=obI===OB.length-1;
+  $("#obBox").innerHTML=`<button class="ob-skip" data-ob="x">${t("obSkip")}</button>
+    <div class="ob-ic">${o.ic}</div>${o.k?`<div class="ob-k">${t(o.k)}</div>`:`<div class="ob-k">${obI} / ${OB.length-1}</div>`}
+    <h2>${t(o.tt)}</h2><p>${t(o.p)}</p><div class="ob-demo">${o.demo()}</div>
+    <div class="ob-dots">${OB.map((_,i)=>`<i class="${i===obI?"on":""}"></i>`).join("")}</div>
+    <div class="ob-nav"><button class="ob-back" data-ob="b" ${obI?"":"hidden"}>${t("obBack")}</button><button class="ob-next" data-ob="n">${last?t("obGo"):obI?t("obNext"):t("obStart")}</button></div>`;
+  const n=$("#obBox .ob-next"); if(n) n.focus({preventScroll:true});
+}
+function openTour(){ if(!$("#obOv")){ const d=document.createElement("div"); d.className="ob-ov"; d.id="obOv"; d.hidden=true;
+    d.innerHTML=`<div class="ob-box" id="obBox" role="dialog" aria-modal="true"></div>`; document.body.appendChild(d);
+    d.onclick=e=>{ const b=e.target.closest("[data-ob]"); if(!b) return; const a=b.dataset.ob;
+      if(a==="x") return closeTour(); if(a==="b"&&obI>0) obI--; if(a==="n"){ if(obI===OB.length-1) return closeTour(); obI++; } renderTour(); };
+    let x0=null; d.addEventListener("touchstart",e=>{x0=e.touches[0].clientX},{passive:true});
+    d.addEventListener("touchend",e=>{ if(x0==null) return; const dx=e.changedTouches[0].clientX-x0; x0=null; if(Math.abs(dx)<50) return; if(dx<0&&obI<OB.length-1) obI++; else if(dx>0&&obI>0) obI--; renderTour(); });
+  }
+  obI=0; renderTour(); $("#obOv").hidden=false; document.body.classList.add("no-scroll"); }
+function closeTour(){ $("#obOv").hidden=true; document.body.classList.remove("no-scroll"); S.obSeen=1; save(); if(location.hash==="#tour") history.replaceState(null,"",location.pathname+location.search); }
+document.addEventListener("keydown",e=>{ const o=$("#obOv"); if(!o||o.hidden) return;
+  if(e.key==="Escape") closeTour(); else if(e.key==="ArrowRight"&&obI<OB.length-1){obI++;renderTour();} else if(e.key==="ArrowLeft"&&obI>0){obI--;renderTour();} });
 $("#scTrad").setAttribute("aria-pressed",!S.simp); $("#scSimp").setAttribute("aria-pressed",S.simp);
 applyI18n(); renderAll(); if(!S.mapSeen){ S.mapSeen=1; S.tab="map"; }
 showTab(S.tab||"map");
+if(!S.obSeen || location.hash==="#tour") openTour();
 </script>
 
 </body>
